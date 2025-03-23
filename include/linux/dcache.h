@@ -79,127 +79,68 @@ full_name_hash(const unsigned char *name, unsigned int len)
 struct dcookie_struct;
 
 #define DNAME_INLINE_LEN_MIN 36
-
-/**
- * Ä¿Â¼Ïî¶ÔÏóÃèÊö·û¡£Ëü´æ·ÅÔÚÃûÎªdentry_cacheµÄslab·ÖÅäÆ÷¸ßËÙ»º´æÖĞ¡£
- */
+/* ç›®å½•é¡¹å¯¹è±¡ç»“æ„*/
 struct dentry {
-	/**
-	 * Ä¿Â¼Ïî¶ÔÏóÒıÓÃ¼ÆÊıÆ÷
-	 */
-	atomic_t d_count;
-	/**
-	 * Ä¿Â¼Ïî¸ßËÙ»º´æ±êÖ¾:¿ÕÏĞ×´Ì¬£¬Î´Ê¹ÓÃ×´Ì¬£¬ÕıÔÚÊ¹ÓÃ×´Ì¬£¬¸º×´Ì¬(Èç¹Â¶ù½Úµã)
-	 */
-	unsigned int d_flags;		/* protected by d_lock */
-	/**
-	 * ±£»¤¸Ã½á¹¹µÄ×ÔĞıËø
-	 */
-	spinlock_t d_lock;		/* per dentry lock */
-	/**
-	 * ÓëÎÄ¼şÃû¹ØÁªµÄË÷Òı½áµã
-	 */
+
+	atomic_t d_count; //è®¡æ•°ï¼ˆç›®å½•é¡¹ï¼‰
+	
+	unsigned int d_flags;		/* protected by d_lock */ // ç›®å½•é¡¹æ ‡å¿—ä½
+	
+	spinlock_t d_lock;		/* per dentry lock */ // ç›®å½•é¡¹é”
+	
 	struct inode *d_inode;		/* Where the name belongs to - NULL is
-					 * negative */
+					 * negative */ // æŒ‡å‘inodeçš„æŒ‡é’ˆâ€”â€”ç›®å½•é¡¹å’ŒæŒ‡é’ˆï¼Œå¤šå¯¹ä¸€
 	/*
 	 * The next three fields are touched by __d_lookup.  Place them here
 	 * so they all fit in a 16-byte range, with 16-byte alignment.
 	 */
-	/**
-	 * ¸¸Ä¿Â¼µÄÄ¿Â¼Ïî¶ÔÏó
-	 */
-	struct dentry *d_parent;	/* parent directory */
-	/**
-	 * ÎÄ¼şÃû
-	 */
-	struct qstr d_name;
+	struct dentry *d_parent;	/* parent directory */ // çˆ¶ç›®å½•ï¼Œç›®å½•é¡¹çš„çˆ¶ç›®å½•
 
-	/**
-	 * ÓÃÓÚÎ´Ê¹ÓÃÄ¿Â¼ÏîÁ´±íµÄÖ¸Õë
-	 */
-	struct list_head d_lru;		/* LRU list */
-	/**
-	 * ¶ÔÓÚÄ¿Â¼¶øÑÔ£¬ÓÃÓÚÍ¬Ò»¸¸Ä¿Â¼ÖĞµÄÄ¿Â¼ÏîÁ´±íµÄÖ¸Õë
-	 */
+	struct qstr d_name; // æ–‡ä»¶åå­— 
+
+	struct list_head d_lru;		/* LRU list */ // LRUé“¾è¡¨
+	
 	struct list_head d_child;	/* child of parent list */
-	/**
-	 * ×ÓÄ¿Â¼ÏîÁ´±íµÄÍ·
-	 */
+	
 	struct list_head d_subdirs;	/* our children */
-	/**
-	 * ÓÃÓÚÓëÍ¬Ò»Ë÷Òı½áµãÏà¹ØµÄÄ¿Â¼ÏîÁ´±íµÄÖ¸Õë
-	 */
+	
 	struct list_head d_alias;	/* inode alias list */
-	/**
-	 * ÓÉd_revalidateµ÷ÓÃ
-	 */
+	
 	unsigned long d_time;		/* used by d_revalidate */
-	/**
-	 * Ä¿Â¼Ïî·½·¨
-	 */
+	
 	struct dentry_operations *d_op;
-	/**
-	 * ÎÄ¼şµÄ³¬¼¶¿é¶ÔÏó
-	 */
+	
 	struct super_block *d_sb;	/* The root of the dentry tree */
-	/**
-	 * ÒÀÀµÓÚÎÄ¼şÏµÍ³µÄÊı¾İ
-	 */
+	
 	void *d_fsdata;			/* fs-specific data */
-	/**
-	 * »ØÊÕÄ¿Â¼Ïî¶ÔÏóÊ±£¬ÓÉRCUÃèÊö·ûÊ¹ÓÃ
-	 */
+	
  	struct rcu_head d_rcu;
-	/**
-	 * Ö¸ÏòÄÚºËÅäÖÃÎÄ¼şÊ¹ÓÃµÄÊı¾İ½á¹¹µÄÖ¸Õë
-	 */
+	
 	struct dcookie_struct *d_cookie; /* cookie, if any */
-	/**
-	 * Ö¸ÏòÉ¢ÁĞ±í±íÏîÁ´±íµÄÖ¸Õë
-	 */
+	
 	struct hlist_node d_hash;	/* lookup hash list */	
-	/**
-	 * ¶ÔÄ¿Â¼¶øÑÔ£¬ÓÃÓÚ¼ÇÂ¼°²×°¸ÃÄ¿Â¼ÏîµÄÎÄ¼şÏµÍ³ÊıµÄ¼ÆÊıÆ÷¡£
-	 */
+	
 	int d_mounted;
-	/**
-	 * ´æ·Å¶ÌÎÄ¼şÃû
-	 */
+	
 	unsigned char d_iname[DNAME_INLINE_LEN_MIN];	/* small names */
+
 };
 
-/**
- * Ä¿Â¼Ïî¶ÔÏóµÄ²Ù×÷·½·¨
- */
+/* ç›®å½•é¡¹ç›¸å…³æ“ä½œå‡½æ•° */
+// å…¶ä¸­åŒ…æ‹¬å†…æ ¸é’ˆå¯¹ç‰¹å®šç›®å½•æ‰€èƒ½è°ƒç”¨çš„æ–¹æ³•,æ¯”å¦‚d_compare()å’Œd_delete()ç­‰æ–¹æ³•
 struct dentry_operations {
-	/**
-	 * ÔÚ°ÑÄ¿Â¼Ïî¶ÔÏó×ª»»ÎªÒ»¸öÎÄ¼şÂ·¾¶ÃûÖ®Ç°£¬ÅĞ¶¨¸ÃÄ¿Â¼Ïî¶ÔÏóÊÇ·ñÈÔÈ»ÓĞĞ§
-	 * VFSÈ±Ê¡ÊÇÊ²Ã´¶¼²»×ö¡£¶øÍøÂçÎÄ¼şÏµÍ³¿ÉÒÔÖ¸¶¨×Ô¼ºµÄº¯Êı
-	 */
-	int (*d_revalidate)(struct dentry *, struct nameidata *);
-	/**
-	 * Éú³ÉÒ»¸öÉ¢ÁĞÖµ£¬ÕâÊÇÓÃÓÚÄ¿Â¼ÏîÉ¢ÁĞ±íµÄ£¬ÌØ¶¨ÓÚ¾ßÌåÎÄ¼şÏµÍ³µÄÉ¢ÁĞº¯Êı¡£
-	 * dentry²ÎÊı±êÊ¶°üº¬Â·¾¶·ÖÁ¿µÄÄ¿Â¼¡£
-	 * ²ÎÊınameÖ¸ÏòÒ»¸ö½á¹¹£¬¸Ã½á¹¹°üº¬Òª²éÕÒµÄÂ·¾¶·ÖÁ¿¼°ÓÉÉ¢ÁĞº¯ÊıÉú³ÉµÄÉ¢ÁĞÖµ
-	 */
+    /* è¯¥å‡½æ•°åˆ¤æ–­ç›®å½•é¡¹å¯¹è±¡æ˜¯å¦æœ‰æ•ˆã€‚VFSå‡†å¤‡ä»dcacheä¸­ä½¿ç”¨ä¸€ä¸ªç›®å½•é¡¹æ—¶ä¼šè°ƒç”¨è¿™ä¸ªå‡½æ•°ï¼Œ
+	 * å¤§éƒ¨åˆ†æ–‡ä»¶ç³»ç»Ÿå°†å…¶ç½®ä¸ºNULLï¼Œå› ä¸ºå®ƒä»¬è®¤ä¸ºdcache(ç¼“å­˜ï¼Œå³dentry_hashtable)ç›®å½•é¡¹å¯¹è±¡æ€»æ˜¯æœ‰æ•ˆçš„ */
+    int (*d_revalidate)(struct dentry *, struct nameidata *);
+
 	int (*d_hash) (struct dentry *, struct qstr *);
-	/**
-	 * ±È½ÏÁ½¸öÎÄ¼şÃû£¬name1Ó¦¸ÃÊôÓÚdirËùÖ¸µÄÄ¿Â¼
-	 * È±Ê¡µÄvfsÊÇ³£ÓÃµÄ×Ö·û´®Æ¥Åäº¯Êı¡£
-	 * ²»¹ı£¬Ã¿¸öÎÄ¼şÏµÍ³¿ÉÒÔÓÃ×Ô¼ºµÄ·½Ê½ÊµÏÖÕâÒ»·½·¨£¬ÀıÈç£ºms_dosÎÄ¼şÏµÍ³²»Çø·Ö´óĞ´ºÍĞ¡Ğ´
-	 */
+	
 	int (*d_compare) (struct dentry *, struct qstr *, struct qstr *);
-	/**
-	 * µ±¶ÔÄ¿Â¼Ïî¶ÔÏóµÄ×îºóÒ»¸öÒıÓÃ±»É¾³ıÊ±(d_count==0)£¬µ÷ÓÃ¸Ã·½·¨£¬È±Ê¡µÄvfsÊ²Ã´¶¼²»×ö
-	 */
+	
 	int (*d_delete)(struct dentry *);
-	/**
-	 * µ±ÒªÊÍ·ÅÒ»¸öÄ¿Â¼Ïî¶ÔÏóÊ±£¨·ÅÈëslab·ÖÅäÆ÷£©£¬µ÷ÓÃ¸Ã·½·¨£¬È±Ê¡vfsÊ²Ã´¶¼²»×ö
-	 */
+	// æ¸…é™¤ç›®å½•é¡¹
 	void (*d_release)(struct dentry *);
-	/**
-	 * µ±Ä¿Â¼Ïî±ä³É¸º×´Ì¬Ê±£¬µ÷ÓÃ±¾·½·¨¡£È±Ê¡vfsµ÷ÓÃiputÊÍ·ÅË÷Òı½áµã¶ÔÏó
-	 */
+	// 
 	void (*d_iput)(struct dentry *, struct inode *);
 };
 
@@ -212,7 +153,7 @@ struct dentry_operations {
 
 /*
 locking rules:
-		big lock	dcache_lock	d_lock   may block
+			big lock	dcache_lock	d_lock   may block
 d_revalidate:	no		no		no       yes
 d_hash		no		no		no       yes
 d_compare:	no		yes		yes      no

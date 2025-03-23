@@ -160,9 +160,8 @@ extern int dir_notify_enable;
 //虚拟文件系统（VFS）不会应用用户文件创建掩码（umask）/* VFS does not apply the umask */
 #define MS_POSIXACL (1 << 16)
 
-#define MS_ACTIVE (1 << 30) // 
+#define MS_ACTIVE (1 << 30) //
 #define MS_NOUSER (1 << 31)
-
 /*
  * Superblock flags that can be altered by MS_REMOUNT
  */
@@ -1292,175 +1291,109 @@ extern int send_sigurg(struct fown_struct *fown);
 #    define MNT_DETACH 0x00000002 /* Just detach from the tree */
 #    define MNT_EXPIRE 0x00000004 /* Mark for expiry */
 
-/**
- * ���еĳ��������������
- */
+
+// 超级块链表
 extern struct list_head super_blocks;
-/**
- * ���������������������������
- */
+
+
 extern spinlock_t sb_lock;
 
 #    define sb_entry(list) list_entry((list), struct super_block, s_list)
 #    define S_BIAS (1 << 30)
 /**
- * ���������
+ * 超级块结构体
  */
 struct super_block {
-    struct list_head s_list; /* Keep this first */
+    /************ 管理超级块的域 ****************/
+    struct list_head s_list;
 
-    dev_t s_dev; /* search index; _not_ kdev_t */
-    /**
-	 * ���ֽ�Ϊ��λ�Ŀ��С
-	 */
-    unsigned long s_blocksize;
-    /**
-	 * �������豸���������е����ֽ�Ϊ��λ�Ŀ��С��
-	 */
-    unsigned long s_old_blocksize;
-    /**
-	 * ��λΪ��λ�Ŀ��С
-	 */
-    unsigned char s_blocksize_bits;
-    /**
-	 * ���־
-	 */
-    unsigned char s_dirt;
-    /**
-	 * �ļ�����󳤶�
-	 */
-    unsigned long long s_maxbytes; /* Max file size */
-    /**
-	 * �ļ�ϵͳ���͡�
-	 */
-    struct file_system_type *s_type;
-    /**
-	 * �����鷽��
-	 */
-    struct super_operations *s_op;
-    /**
-	 * �����޶������
-	 */
-    struct dquot_operations *dq_op;
-    /**
-	 * �����޶��������
-	 */
-    struct quotactl_ops *s_qcop;
-    /**
-	 * NFSʹ�õ��������
-	 */
-    struct export_operations *s_export_op;
-    /**
-	 * ��װ��־
-	 */
-    unsigned long s_flags;
-    /**
-	 * �ļ�ϵͳ��ħ��
-	 */
-    unsigned long s_magic;
+    unsigned char s_dirt; /* 脏位 */
 
     struct dentry *s_root; // 指向根目录的dentry 目录项
-    /**
-	 * ж��ʱʹ�õ��ź���
-	 */
+                          
+    int s_count; /* 对超级块的使用次数*/
+    /*对超级块读写进行同步 */
     struct rw_semaphore s_umount;
-    /**
-	 * ����������ʹ�õ��ź���
-	 */
+   
+	// 链表
+    struct list_head s_files;      // 文件链表
+
+    /* 已经修改的inodes形成链表 */ /* dirty inodes */
+    struct list_head s_dirty;
+	/* 所有的inode*/
+    struct list_head s_inodes; /* all inodes */
+
+
+	/* **************描述具体文件系统的整体信息的域****************/
+    /* 包含该具体文件系统的块设备标识符。例如，对于 /dev/hda1，其设备标识符为 0x301*/
+    dev_t s_dev;
+    /*该具体文件系统中数据块的大小， 以字节为单位 */
+    unsigned long s_blocksize;
+    /* 数据块大小（old）*/
+    unsigned long s_old_blocksize;
+    /*块大小的值占用的位数，例如，如果块大小为1024字节，则该值为10*/
+    unsigned char s_blocksize_bits;
+    /* 文件的最大长度*/ /* Max file size */
+    unsigned long long s_maxbytes;
+    /* 安装标志*/
+    unsigned long s_flags;
+    /* 魔数，即该具体文件系统区别于其它 文系统的一个标志*/
+    unsigned long s_magic;
+
+    /***********  具体文件系统的域*****************/
+
+    /*指向文件系统的 file_system_type 数据结构的指针 */
+    struct file_system_type *s_type;
+    /* 超级块操作函数 */
+    struct super_operations *s_op;
+    /* 指向某个特定的具体文件系统   用于限额操作的函数集合 */
+    struct dquot_operations *dq_op;
+
+    struct quotactl_ops *s_qcop;
+
+    struct export_operations *s_export_op;
+
     struct semaphore s_lock;
-    /**
-	 * ���ü���
-	 */
-    int s_count;
-    /**
-	 * �Գ�����������ڵ����ͬ���ı�־
-	 */
-    int s_syncing;
-    /**
-	 * �Գ�������Ѱ�װ�ļ�ϵͳ����ͬ���ĵı�־
-	 */
+
+ 	void *s_fs_info; /* Filesystem private info */
+    
+ 	int s_syncing; // 同步
+
     int s_need_sync_fs;
-    /**
-	 * �����ü�����
-	 */
+
     atomic_t s_active;
-    /**
-	 * �����鰲ȫ���ݽṹ
-	 */
+  
     void *s_security;
-    /**
-	 * ��������չ���Խṹ��ָ��
-	 */
+    
     struct xattr_handler **s_xattr;
 
-    /**
-	 * ���������ڵ�����
-	 */
-    struct list_head s_inodes; /* all inodes */
-    /**
-	 * �������ڵ�����
-	 */
-    struct list_head s_dirty; /* dirty inodes */
-    /**
-	 * �ȵ�д����̵������ڵ�����
-	 */
-    struct list_head s_io; /* parked for writeback */
-    /**
-	 * ����Ŀ¼������������NFS
-	 */
-    struct hlist_head s_anon; /* anonymous dentries for (nfs) exporting */
-    /**
-	 * �ļ���������
-	 */
-    struct list_head s_files;
 
-    /**
-	 * ָ����豸����������������ָ��
-	 */
+    struct list_head s_io; /* parked for writeback */
+
+    struct hlist_head s_anon; /* anonymous dentries for (nfs) exporting */
+
     struct block_device *s_bdev;
-    /**
-	 * ��ͬ�ļ����͵ĳ��������������
-	 */
+
     struct list_head s_instances;
-    /**
-	 * �����޶��������
-	 */
+
     struct quota_info s_dquot; /* Diskquota specific options */
 
-    /**
-	 * �����ļ�ϵͳʱʹ�õı�־������ǿ������һ����״̬��
-	 */
     int s_frozen;
-    /**
-	 * �ȴ��ⶳ�Ķ��С�
-	 */
+
     wait_queue_head_t s_wait_unfrozen;
 
-    /**
-	 * ����������Ŀ��豸����
-	 */
     char s_id[32]; /* Informational name */
-
-    /**
-	 * ָ���ض��ļ�ϵͳ�ĳ�������Ϣ��ָ�롣���ļ�ϵͳ�Զ��塣
-	 * ��ext2��˵����ָ��һ��ext2_sb_info���͵Ľṹ��
-	 */
-    void *s_fs_info; /* Filesystem private info */
 
     /*
 	 * The next field is for VFS *only*. No filesystems have any business
 	 * even looking at it. You had been warned.
 	 */
-    /**
-	 * ��VFSͨ��Ŀ¼�������ļ�ʱʹ�õ��ź�����
-	 */
+
     struct semaphore s_vfs_rename_sem; /* Kludge */
 
     /* Granuality of c/m/atime in ns.
 	   Cannot be worse than a second */
-    /**
-	 * c/m/atime��ʱ������ȡ�
-	 */
+
     u32 s_time_gran;
 };
 

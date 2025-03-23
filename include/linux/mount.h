@@ -32,57 +32,32 @@
 
 struct vfsmount
 {
-	struct list_head mnt_hash; /* hash list */
+	struct list_head mnt_hash; /* hash list */ // 散列表，把vfsmount结构体挂载到散列表中
 	
-	struct vfsmount *mnt_parent;	/* fs we are mounted on */
-	/**
-	 * ��װ��Ŀ¼�ڵ㡣
-	 */
-	struct dentry *mnt_mountpoint;	/* dentry of mountpoint */
-	/**
-	 * ָ������ļ�ϵͳ��Ŀ¼��dentry��
-	 */
-	struct dentry *mnt_root;	/* root of the mounted tree */
-	/**
-	 * ���ļ�ϵͳ�ĳ��������
-	 */
-	struct super_block *mnt_sb;	/* pointer to superblock */
-	/**
-	 * ���������ļ�ϵͳ������������ͷ
-	 */
-	struct list_head mnt_mounts;	/* list of children, anchored here */
-	/**
-	 * �Ѱ�װ�ļ�ϵͳ����ͷ��ͨ�����ֶν�����븸�ļ�ϵͳ��mnt_mounts�����С�
-	 */
-	struct list_head mnt_child;	/* and going through their mnt_child */
-	/**
-	 * ���ü���������ֹ�ļ�ϵͳ��ж�ء�
-	 */
-	atomic_t mnt_count;
-	/**
-	 * mount��־
-	 */
-	int mnt_flags;
-	/**
-	 * ����ļ�ϵͳ���Ϊ���ڣ������������־��
-	 */
+	struct vfsmount *mnt_parent;	/* fs we are mounted on */ // 指向父文件系统的vfsmount结构体
+	
+	struct dentry *mnt_mountpoint;	/* dentry of mountpoint */ // 挂载点的（目录项） 指针
+	
+	struct dentry *mnt_root;	/* root of the mounted tree */ // 挂载点的根目录项
+	
+	struct super_block *mnt_sb;	/* pointer to superblock */  // 指向超级块的指针 // 
+	
+	struct list_head mnt_mounts;	/* list of children, anchored here */ // 指向子文件系统的vfsmount结构体链表
+	
+	struct list_head mnt_child;	/* and going through their mnt_child */ // 指向父文件系统的vfsmount结构体链表
+	
+	atomic_t mnt_count; 
+	
+	int mnt_flags; 
+	
 	int mnt_expiry_mark;		/* true if marked for expiry */
-	/**
-	 * �豸�ļ�����
-	 */
+	
 	char *mnt_devname;		/* Name of device e.g. /dev/dsk/hda1 */
-	/**
-	 * �Ѱ�װ�ļ�ϵͳ��������namespace����ָ��?
-	 * ͨ�����ֶν�����뵽namespace��list�����С�
-	 */
+	
 	struct list_head mnt_list;
-	/**
-	 * �ļ�ϵͳ��������ָ�롣
-	 */
+
 	struct list_head mnt_fslink;	/* link in fs-specific expiry list */
-	/**
-	 * ���������ռ�ָ��
-	 */
+	
 	struct namespace *mnt_namespace; /* containing namespace */
 };
 
