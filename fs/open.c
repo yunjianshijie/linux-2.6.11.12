@@ -751,7 +751,7 @@ asmlinkage long sys_fchown(unsigned int fd, uid_t user, gid_t group)
  * used by symlinks.
  */
 /**
- * ´ò¿ªÎÄ¼þ
+ * ï¿½ï¿½ï¿½Ä¼ï¿½
  */
 struct file *filp_open(const char * filename, int flags, int mode)
 {
@@ -759,7 +759,7 @@ struct file *filp_open(const char * filename, int flags, int mode)
 	struct nameidata nd;
 
 	/**
-	 * ¸ù¾Ý´«ÈëµÄ±êÖ¾ÐÞ¸Änamei_flags±êÖ¾
+	 * ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½Ä±ï¿½Ö¾ï¿½Þ¸ï¿½namei_flagsï¿½ï¿½Ö¾
 	 */
 	namei_flags = flags;
 	if ((namei_flags+1) & O_ACCMODE)
@@ -768,7 +768,7 @@ struct file *filp_open(const char * filename, int flags, int mode)
 		namei_flags |= 2;
 
 	/**
-	 * ½øÐÐÕæÕýµÄ´ò¿ªµÄ²Ù×÷¡£
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ò¿ªµÄ²ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	error = open_namei(filename, namei_flags, mode, &nd);
 	if (!error)
@@ -780,7 +780,7 @@ struct file *filp_open(const char * filename, int flags, int mode)
 EXPORT_SYMBOL(filp_open);
 
 /**
- * ´ò¿ªÒ»¸öÄ¿Â¼Ïî
+ * ï¿½ï¿½Ò»ï¿½ï¿½Ä¿Â¼ï¿½ï¿½
  */
 struct file *dentry_open(struct dentry *dentry, struct vfsmount *mnt, int flags)
 {
@@ -790,24 +790,24 @@ struct file *dentry_open(struct dentry *dentry, struct vfsmount *mnt, int flags)
 
 	error = -ENFILE;
 	/**
-	 * ·ÖÅäÒ»¸öÐÂµÄÎÄ¼þ¶ÔÏó
+	 * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	f = get_empty_filp();
 	if (!f)
 		goto cleanup_dentry;
 	/**
-	 * ¸ù¾ÝopenÏµÍ³µ÷ÓÃµÄ·ÃÎÊÄ£Ê½±êÖ¾³õÊ¼»¯ÎÄ¼þ¶ÔÏóµÄf_flagsºÍf_mode×Ö¶Î¡£
+	 * ï¿½ï¿½ï¿½ï¿½openÏµÍ³ï¿½ï¿½ï¿½ÃµÄ·ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½Ö¾ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½f_flagsï¿½ï¿½f_modeï¿½Ö¶Î¡ï¿½
 	 */
 	f->f_flags = flags;
 	f->f_mode = ((flags+1) & O_ACCMODE) | FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
 	/**
-	 * ¸ù¾Ý×÷Îª²ÎÊý´«µÝÀ´µÄÄ¿Â¼Ïî¶ÔÏóµØÖ·ºÍÒÑ¾­°²×°ÎÄ¼þÏµÍ³¶ÔÏóµÄµØÖ·
-	 * ³õÊ¼»¯f_dentryºÍf_vfsmnt
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½×°ï¿½Ä¼ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½Äµï¿½Ö·
+	 * ï¿½ï¿½Ê¼ï¿½ï¿½f_dentryï¿½ï¿½f_vfsmnt
 	 */
 	inode = dentry->d_inode;
 	if (f->f_mode & FMODE_WRITE) {
 		/**
-		 * ¼ì²éÐ´È¨ÏÞ
+		 * ï¿½ï¿½ï¿½Ð´È¨ï¿½ï¿½
 		 */
 		error = get_write_access(inode);
 		if (error)
@@ -819,16 +819,16 @@ struct file *dentry_open(struct dentry *dentry, struct vfsmount *mnt, int flags)
 	f->f_vfsmnt = mnt;
 	f->f_pos = 0;
 	/**
-	 * ½«f_opÉèÖÃÎªÏàÓ¦Ë÷Òý½áµã¶ÔÏói_fop×Ö¶ÎµÄÄÚÈÝ¡£Îª½øÒ»²½µÄÎÄ¼þ²Ù×÷½¨Á¢Æð¶ÔÓ¦µÄ·½·¨¡£
+	 * ï¿½ï¿½f_opï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½i_fopï¿½Ö¶Îµï¿½ï¿½ï¿½ï¿½Ý¡ï¿½Îªï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	f->f_op = fops_get(inode->i_fop);
 	/**
-	 * file_move½«ÎÄ¼þ¶ÔÏó²åÈëµ½ÎÄ¼þÏµÍ³³¬¼¶¿éµÄs_files×Ö¶ÎËùÖ¸ÏòµÄ´ò¿ªÎÄ¼þÁ´±í
+	 * file_moveï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ëµ½ï¿½Ä¼ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½s_filesï¿½Ö¶ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Ä´ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	file_move(f, &inode->i_sb->s_files);
 
 	/**
-	 * Èç¹ûÎÄ¼þÏµÍ³µÄopen·½·¨±»¶¨Òå£¬Ôòµ÷ÓÃËü¡£Ò»°ãÃ»ÓÐ¶¨Òå¡£
+	 * ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ÏµÍ³ï¿½ï¿½openï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ã»ï¿½Ð¶ï¿½ï¿½å¡£
 	 */
 	if (f->f_op && f->f_op->open) {
 		error = f->f_op->open(inode,f);
@@ -838,13 +838,13 @@ struct file *dentry_open(struct dentry *dentry, struct vfsmount *mnt, int flags)
 	f->f_flags &= ~(O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC);
 
 	/**
-	 * ³õÊ¼»¯Ô¤¶ÁµÄÊý¾Ý½á¹¹
+	 * ï¿½ï¿½Ê¼ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½á¹¹
 	 */
 	file_ra_state_init(&f->f_ra, f->f_mapping->host->i_mapping);
 
 	/* NB: we're sure to have correct a_ops only after f_op->open */
 	/**
-	 * Èç¹ûO_DIRECT±»ÉèÖÃ£¬¾Í¼ì²éÖ±½ÓIO²Ù×÷ÊÇ·ñ¿ÉÒÔ×÷ÓÃÓÚÎÄ¼þ
+	 * ï¿½ï¿½ï¿½O_DIRECTï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½Í¼ï¿½ï¿½Ö±ï¿½ï¿½IOï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 	 */
 	if (f->f_flags & O_DIRECT) {
 		if (!f->f_mapping->a_ops || !f->f_mapping->a_ops->direct_IO) {
@@ -971,11 +971,10 @@ void fastcall fd_install(unsigned int fd, struct file * file)
 EXPORT_SYMBOL(fd_install);
 
 /**
- * openÏµÍ³µ÷ÓÃ
- *	filename:Òª´ò¿ªµÄÎÄ¼þÃû
- *	flags:·ÃÎÊÄ£Ê½
- *	mode:´´½¨ÎÄ¼þÐèÒªµÄÐí¿ÉÈ¨ÏÞ¡£
- */
+ * openÏµÍ³ï¿½ï¿½ï¿½ï¿½
+ *	filename:æ–‡ä»¶åå­—
+ *	flags: 
+ *	mode:
 asmlinkage long sys_open(const char __user * filename, int flags, int mode)
 {
 	char * tmp;
@@ -985,25 +984,25 @@ asmlinkage long sys_open(const char __user * filename, int flags, int mode)
 	flags |= O_LARGEFILE;
 #endif
 	/**
-	 * ´ÓÓÃ»§Ì¬»ñÈ¡ÎÄ¼þÃû
+	 * ï¿½ï¿½ï¿½Ã»ï¿½Ì¬ï¿½ï¿½È¡ï¿½Ä¼ï¿½ï¿½ï¿½
 	 */
 	tmp = getname(filename);
 	fd = PTR_ERR(tmp);
 	if (!IS_ERR(tmp)) {
 		/**
-		 * »ñÈ¡Ò»¸öÎ´ÓÃÎÄ¼þ¾ä±ú
+		 * ï¿½ï¿½È¡Ò»ï¿½ï¿½Î´ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½
 		 */
 		fd = get_unused_fd();
 		if (fd >= 0) {
 			/**
-			 * ´ò¿ªÎÄ¼þ²¢·µ»Øfile½á¹¹¡£
+			 * ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½fileï¿½á¹¹ï¿½ï¿½
 			 */
 			struct file *f = filp_open(tmp, flags, mode);
 			error = PTR_ERR(f);
 			if (IS_ERR(f))
 				goto out_error;
 			/**
-			 * ½«fileÖ¸Õë¸³¸øcurrent->files->fd[fd]
+			 * ï¿½ï¿½fileÖ¸ï¿½ë¸³ï¿½ï¿½current->files->fd[fd]
 			 */
 			fd_install(fd, f);
 		}
@@ -1014,7 +1013,7 @@ out:
 
 out_error:
 	/**
-	 * ´ò¿ªÎÄ¼þÊ§°Ü£¬ÊÍ·ÅÎÄ¼þ¾ä±ú
+	 * ï¿½ï¿½ï¿½Ä¼ï¿½Ê§ï¿½Ü£ï¿½ï¿½Í·ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½
 	 */
 	put_unused_fd(fd);
 	fd = error;
@@ -1054,7 +1053,7 @@ int filp_close(struct file *filp, fl_owner_t id)
 	}
 
 	/**
-	 * µ÷ÓÃÎÄ¼þµÄflush·½·¨£¬Ö»ÓÐÉÙÊýÇý¶¯²Å»áÉèÖÃÕâ¸ö·½·¨¡£
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½flushï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	if (filp->f_op && filp->f_op->flush) {
 		int err = filp->f_op->flush(filp);
@@ -1064,11 +1063,11 @@ int filp_close(struct file *filp, fl_owner_t id)
 
 	dnotify_flush(filp, id);
 	/**
-	 * ÊÍ·ÅÎÄ¼þÉÏµÄÇ¿ÖÆËø¡£
+	 * ï¿½Í·ï¿½ï¿½Ä¼ï¿½ï¿½Ïµï¿½Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	locks_remove_posix(filp, id);
 	/**
-	 * ÊÍ·ÅÎÄ¼þ¶ÔÏó¡£
+	 * ï¿½Í·ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	fput(filp);
 	return retval;
@@ -1090,20 +1089,20 @@ asmlinkage long sys_close(unsigned int fd)
 	if (fd >= files->max_fds)
 		goto out_unlock;
 	/**
-	 * »ñµÃÎÄ¼þ¶ÔÏó£¬Èç¹ûÎª¿Õ£¬Ôò·µ»Ø´íÎóÂë¡£
+	 * ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Õ£ï¿½ï¿½ò·µ»Ø´ï¿½ï¿½ï¿½ï¿½ë¡£
 	 */
 	filp = files->fd[fd];
 	if (!filp)
 		goto out_unlock;
 	files->fd[fd] = NULL;
 	/**
-	 * ÊÍ·ÅÎÄ¼þÃèÊö·û£¬Çå³ýopen_fdsºÍclose_on_execÖÐÏàÓ¦µÄÎ»¡£
+	 * ï¿½Í·ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½open_fdsï¿½ï¿½close_on_execï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Î»ï¿½ï¿½
 	 */
 	FD_CLR(fd, files->close_on_exec);
 	__put_unused_fd(files, fd);
 	spin_unlock(&files->file_lock);
 	/**
-	 * ¹Ø±ÕÎÄ¼þ
+	 * ï¿½Ø±ï¿½ï¿½Ä¼ï¿½
 	 */
 	return filp_close(filp, files);
 

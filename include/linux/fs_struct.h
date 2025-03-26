@@ -4,32 +4,24 @@
 struct dentry;
 struct vfsmount;
 
-/**
- * ½ø³ÌµÄfs×Ö¶ÎÖ¸ÏòµÄÄÚÈİ¡£
- */
+
 struct fs_struct {
-	/**
-	 * ¹²Ïífs½á¹¹µÄ½ø³Ì¸öÊı¡£
-	 */
+	
 	atomic_t count;
-	/**
-	 * ±£»¤¸Ã½á¹¹µÄ¶ÁĞ´Ëø¡£
-	 */
+	
 	rwlock_t lock;
-	/**
-	 * µ±´ò¿ªÎÄ¼şÉèÖÃÎÄ¼şÈ¨ÏŞÊ±Ê¹ÓÃµÄÎ»ÑÚÂë¡£
+	
+	int umask; //ç”¨æˆ·æ–‡ä»¶åˆ›å»ºæ©ç  ï¼Œç”¨äºè®¾ç½®æ–‡ä»¶æƒé™
+    /**
+	 * root			æ ¹ç›®å½• ç›®å½•é¡¹
+	 * pwd			å½“å‰å·¥ä½œç›®å½•ï¼Œæ‰€æœ‰ç›¸å¯¹è·¯å¾„  ç›®å½•
+	 * altroot		æŒ‡å‘å¤‡ç”¨æ ¹ç›®å½•çš„ç›®å½•é¡¹
 	 */
-	int umask;
+    struct dentry * root, * pwd, * altroot;
 	/**
-	 * root			¸ùÄ¿Â¼µÄÄ¿Â¼Ïî¡£
-	 * pwd			µ±Ç°¹¤×÷Ä¿Â¼µÄÄ¿Â¼Ïî¡£
-	 * altroot		Ä£Äâ¸ùÄ¿Â¼µÄÄ¿Â¼Ïî¡£x86ÉÏÎ´ÓÃ¡£
-	 */
-	struct dentry * root, * pwd, * altroot;
-	/**
-	 * rootmnt		¸ùÄ¿Â¼Ëù°²×°µÄÎÄ¼şÏµÍ³¶ÔÏó¡£
-	 * pwdmnt		µ±Ç°¹¤×÷Ä¿Â¼Ëù°²×°µÄÎÄ¼şÏµÍ³¶ÔÏó¡£
-	 * altrootmnt	Ä£Äâ¸ùÄ¿Â¼Ëù°²×°µÄÎÄ¼şÏµÍ³¶ÔÏó¡£
+	 * rootmnt		
+	 * pwdmnt		
+	 * altrootmnt	
 	 */
 	struct vfsmount * rootmnt, * pwdmnt, * altrootmnt;
 };

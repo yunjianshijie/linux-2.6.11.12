@@ -996,75 +996,39 @@ struct file_ra_state {
 #    define RA_FLAG_MISS 0x01 /* a cache miss occured against this file */
 /**
  * ���ں�ȷ��������������256��ҳ����ҳ���ٻ�����ʱ(�������ٻ��������������ra->cache_hit�ֶ�)����ñ�־λ��λ��
- * ��ʱ�ں���Ϊ���е�ҳ���Ѿ���ҳ���ٻ����ڣ������ر�Ԥ����
+ * 
  */
 #    define RA_FLAG_INCACHE 0x02 /* file is already in cache */
 
-/**
- * ����һ���򿪵��ļ������ں���openʱ���������ļ�������ʵ�������رպ󣬲��ͷŸýṹ��
- */
 struct file {
-    /**
-	 * ����ͨ���ļ�����������ָ�롣
-	 */
-    struct list_head f_list;
-    struct dentry *f_dentry;
-    /**
-	 * ���и��ļ����Ѿ���װ���ļ�ϵͳ��
-	 */
-    struct vfsmount *f_vfsmnt;
-    /**
-	 * ���ļ���صĲ������ں���ִ��open����ʱ�������ָ�븳ֵ���Ժ���Ҫ������Щ����ʱ�Ͷ�ȡ���ָ�롣
-	 * ����Ϊ�˷��������������Ҳ����˵���������κ���Ҫ��ʱ���޸��ļ��Ĺ�����������"��������"��
-	 */
-    struct file_operations *f_op;
-    /**
-	 * �ļ���������ü�����
-	 * ָ�����ļ�����Ľ��������ں�Ҳ�������Ӵ˼�����
-	 */
-    atomic_t f_count;
-    /**
-	 * �ļ���־����O_RONLY��O_NONBLOCK��O_SYNC��Ϊ�˼���û������Ƿ������ʽ�Ĳ���������������Ҫ���O_NONBLOCK��־��������־�����õ���
-	 * ����дȨ��Ӧ�ò鿴f_mode������f_flags��
-	 */
+
+    struct list_head f_list; // 打开文件列表中连接的多个struct file
+
+    struct dentry *f_dentry; // 指向文件关联的目录项 
+	
+    struct vfsmount *f_vfsmnt; // 指向这个文件的挂载点,这个文件在哪个文件系统上
+
+    struct file_operations *f_op; // 操作函数
+
+    atomic_t f_count; // 引用计数
+
     unsigned int f_flags;
-    /** 
-	 * �ļ�ģʽ��FMODE_READ��FMODE_WRITE�ֱ��ʾ��дȨ�ޡ�
-	 */
+
     mode_t f_mode;
-    /**
-	 * ����д�����Ĵ����롣
-	 */
+
     int f_error;
-    /**
-	 * ��ǰ�Ķ�дλ�á�����һ��64λ�����������������Ҫ֪���ļ��еĵ�ǰλ�ã����Զ�ȡ���ֵ���ǲ�Ҫȥ�޸�����
-	 * read/write��ʹ�����ǽ��յ�������Ǹ�ָ�������������һλ�á�
-	 */
+
     loff_t f_pos;
-    /**
-	 * ͨ���źŽ�����IO����֪ͨ�����ݡ�
-	 */
     struct fown_struct f_owner;
-    /**
-	 * �û���UID��GID.
-	 */
+
     unsigned int f_uid, f_gid;
-    /**
-	 * �ļ���Ԥ��״̬��
-	 */
+
     struct file_ra_state f_ra;
 
-    /**
-	 * һ�β����ܶ�д������ֽ�������ǰ����Ϊ2^31-1
-	 */
     size_t f_maxcount;
-    /**
-	 * �汾�ţ�ÿ��ʹ�ú������
-	 */
+
     unsigned long f_version;
-    /**
-	 * �ļ�����İ�ȫ�ṹָ�롣
-	 */
+
     void *f_security;
 
     /* needed for tty driver, and maybe others */
@@ -1077,18 +1041,12 @@ struct file {
 
 #    ifdef CONFIG_EPOLL
     /* Used by fs/eventpoll.c to link all the hooks to this file */
-    /**
-	 * �ļ����¼���ѯ�ȴ�������ͷ��
-	 */
+    
     struct list_head f_ep_links;
-    /**
-	 * ����f_ep_links����������
-	 */
+    
     spinlock_t f_ep_lock;
 #    endif /* #ifdef CONFIG_EPOLL */
-    /**
-	 * ָ���ļ���ַ�ռ�Ķ���
-	 */
+   
     struct address_space *f_mapping;
 };
 extern spinlock_t files_lock;
@@ -1291,10 +1249,8 @@ extern int send_sigurg(struct fown_struct *fown);
 #    define MNT_DETACH 0x00000002 /* Just detach from the tree */
 #    define MNT_EXPIRE 0x00000004 /* Mark for expiry */
 
-
 // 超级块链表
 extern struct list_head super_blocks;
-
 
 extern spinlock_t sb_lock;
 
@@ -1310,21 +1266,20 @@ struct super_block {
     unsigned char s_dirt; /* 脏位 */
 
     struct dentry *s_root; // 指向根目录的dentry 目录项
-                          
+
     int s_count; /* 对超级块的使用次数*/
     /*对超级块读写进行同步 */
     struct rw_semaphore s_umount;
-   
-	// 链表
-    struct list_head s_files;      // 文件链表
+
+    // 链表
+    struct list_head s_files; // 文件链表
 
     /* 已经修改的inodes形成链表 */ /* dirty inodes */
     struct list_head s_dirty;
-	/* 所有的inode*/
+    /* 所有的inode*/
     struct list_head s_inodes; /* all inodes */
 
-
-	/* **************描述具体文件系统的整体信息的域****************/
+    /* **************描述具体文件系统的整体信息的域****************/
     /* 包含该具体文件系统的块设备标识符。例如，对于 /dev/hda1，其设备标识符为 0x301*/
     dev_t s_dev;
     /*该具体文件系统中数据块的大小， 以字节为单位 */
@@ -1355,18 +1310,17 @@ struct super_block {
 
     struct semaphore s_lock;
 
- 	void *s_fs_info; /* Filesystem private info */
-    
- 	int s_syncing; // 同步
+    void *s_fs_info; /* Filesystem private info */
+
+    int s_syncing; // 同步
 
     int s_need_sync_fs;
 
     atomic_t s_active;
-  
-    void *s_security;
-    
-    struct xattr_handler **s_xattr;
 
+    void *s_security;
+
+    struct xattr_handler **s_xattr;
 
     struct list_head s_io; /* parked for writeback */
 

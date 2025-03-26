@@ -140,8 +140,14 @@ struct dentry_operations {
 	int (*d_delete)(struct dentry *);
 	// 清除目录项
 	void (*d_release)(struct dentry *);
-	// 
-	void (*d_iput)(struct dentry *, struct inode *);
+    /* 
+	 * 当目录项对象丢失其索引节点时（也就是磁盘索引节点被删除了），VFS会调用该函数。默认VFS会调用input()释放索引节点。
+	 * 如果文件系统重载了该函数，那么除了执行此文件系统特殊的工作外，还必须调用input()函数。
+	 */
+    void (*d_iput)(struct dentry *, struct inode *);
+
+    /* 自定义函数用于生成目录项的显示名，通常在调试中使用，用来打印目录项的路径等信息。 */
+    char *(*d_dname)(struct dentry *, char *, int); // 自己加的
 };
 
 /* the dentry parameter passed to d_hash and d_compare is the parent

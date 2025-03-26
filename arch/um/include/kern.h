@@ -30,7 +30,7 @@ extern int pause(void);
 extern int write(int, const void *, int);
 extern int exit(int);
 extern int close(int);
-extern int read(unsigned int, char *, int);
+extern int read(unsigned int, char *, int); 
 extern int pipe(int *);
 extern int sched_yield(void);
 extern int ptrace(int op, int pid, long addr, long data);

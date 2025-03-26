@@ -10,26 +10,26 @@
 
 #include "of1275.h"
 
-int
-read(ihandle instance, void *buf, int buflen)
+//
+int read(ihandle instance, void *buf, int buflen)
 {
     struct prom_args {
-	char *service;
-	int nargs;
-	int nret;
-	ihandle instance;
-	void *buf;
-	int buflen;
-	int actual;
+        char *service;
+        int nargs;
+        int nret;
+        ihandle instance;
+        void *buf;
+        int buflen;
+        int actual;
     } args;
 
-    args.service = "read";
-    args.nargs = 3;
-    args.nret = 1;
+    args.service  = "read";
+    args.nargs    = 3;
+    args.nret     = 1;
     args.instance = instance;
-    args.buf = buf;
-    args.buflen = buflen;
-    args.actual = -1;
+    args.buf      = buf;
+    args.buflen   = buflen;
+    args.actual   = -1;
     (*of_prom_entry)(&args);
     return args.actual;
 }
