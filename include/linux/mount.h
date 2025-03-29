@@ -17,22 +17,20 @@
 #include <asm/atomic.h>
 
 /**
- * ���Ѿ���װ�ļ�ϵͳ�н�ֹsetuid��setgid��־��
+ * mnt_no suid 挂载文件系统时不允许设置用户ID（SUID）位 (suid是要访问这个文件的用户是否具有和文件属主相同的权限) 1
+ *
+#define MNT_NOSUID 1 // 
+/** 
+ *  mnt_no dev没有设备文件 2 
  */
-#define MNT_NOSUID	1
-/**
- * ���Ѿ���װ�ļ�ϵͳ�н�ֹ�����豸�ļ�
+#define MNT_NODEV	2 //
+/** 
+ *  mnt_no exec 没进程可执行文件 4
  */
-#define MNT_NODEV	2
-/**
- * ���Ѿ���װ�ļ�ϵͳ�в���������ִ�С�
- */
-#define MNT_NOEXEC	4
+#define MNT_NOEXEC	4 //
 
-
-struct vfsmount
-{
-	struct list_head mnt_hash; /* hash list */ // 散列表，把vfsmount结构体挂载到散列表中
+struct vfsmount {
+    struct list_head mnt_hash; /* hash list */ // 散列表，把vfsmount结构体挂载到散列表中
 	
 	struct vfsmount *mnt_parent;	/* fs we are mounted on */ // 指向父文件系统的vfsmount结构体
 	

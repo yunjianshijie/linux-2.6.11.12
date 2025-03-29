@@ -1802,7 +1802,7 @@ struct super_operations {
 	 */
     int (*statfs)(struct super_block *, struct kstatfs *);
     /**
-	 * ���µ�ѡ�����°�װ�ļ�ϵͳ��
+	 *  
 	 */
     int (*remount_fs)(struct super_block *, int *, char *);
     /**
