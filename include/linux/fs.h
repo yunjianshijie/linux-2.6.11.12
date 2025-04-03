@@ -1272,10 +1272,9 @@ struct super_block {
     struct rw_semaphore s_umount;
 
     // 链表
-    struct list_head s_files; // 文件链表
-
+    struct list_head s_files; // 文件链表 struct file 当前打开的所有文件
     /* 已经修改的inodes形成链表 */ /* dirty inodes */
-    struct list_head s_dirty;
+    struct list_head s_dirty; 
     /* 所有的inode*/
     struct list_head s_inodes; /* all inodes */
 
